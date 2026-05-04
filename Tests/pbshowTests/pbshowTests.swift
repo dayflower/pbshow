@@ -1,5 +1,6 @@
-import Testing
 import Foundation
+import Testing
+
 @testable import pbshow
 
 @Test func parse_defaultsToShowWithoutArgs() throws {
@@ -9,7 +10,7 @@ import Foundation
     #expect(parsed.index == nil)
     #expect(parsed.force == false)
     switch parsed.command {
-    case let .show(type):
+    case .show(let type):
         #expect(type == nil)
     default:
         Issue.record("Expected show command")
@@ -23,7 +24,7 @@ import Foundation
     #expect(parsed.index == 2)
     #expect(parsed.force == true)
     switch parsed.command {
-    case let .show(type):
+    case .show(let type):
         #expect(type?.rawValue == "public.utf8-plain-text")
     default:
         Issue.record("Expected show command")
@@ -37,7 +38,7 @@ import Foundation
     #expect(parsed.index == 0)
     #expect(parsed.force == false)
     switch parsed.command {
-    case let .list(type):
+    case .list(let type):
         #expect(type?.rawValue == "public.html")
     default:
         Issue.record("Expected list command")
@@ -145,7 +146,7 @@ import Foundation
 }
 
 @Test func versionLine_formatsBinaryAndSemVer() throws {
-    #expect(pbshow.versionLine() == "pbshow 0.1.0")
+    #expect(Pbshow.versionLine() == "pbshow 0.1.0")
 }
 
 @Test func helpText_includesCurrentVersion() throws {
@@ -160,7 +161,7 @@ import Foundation
     let parsed = try parser.parse(["export", "public.utf8-plain-text", "-o", "out.bin"])
 
     switch parsed.command {
-    case let .export(type, outputPath):
+    case .export(let type, let outputPath):
         #expect(type.rawValue == "public.utf8-plain-text")
         #expect(outputPath == "out.bin")
     default:

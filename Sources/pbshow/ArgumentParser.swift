@@ -75,7 +75,9 @@ struct ArgumentParser {
             if positionals.count > 2 {
                 throw CLIError("Too many arguments for 'export'")
             }
-            let parsed = ParsedArguments(command: .export(type: ClipboardType(rawValue: positionals[1]), outputPath: outputPath), index: index, force: false)
+            let parsed = ParsedArguments(
+                command: .export(type: ClipboardType(rawValue: positionals[1]), outputPath: outputPath), index: index,
+                force: false)
             try validateOptions(for: parsed.command, force: force, outputPath: outputPath)
             return parsed
         case "clear":
@@ -90,7 +92,8 @@ struct ArgumentParser {
             if positionals.count > 1 {
                 throw CLIError("Unknown command: \(first)")
             }
-            let parsed = ParsedArguments(command: .show(type: ClipboardType(rawValue: first)), index: index, force: force)
+            let parsed = ParsedArguments(
+                command: .show(type: ClipboardType(rawValue: first)), index: index, force: force)
             try validateOptions(for: parsed.command, force: force, outputPath: outputPath)
             return parsed
         }
@@ -102,35 +105,35 @@ struct ArgumentParser {
 
     func helpText() -> String {
         """
-pbshow \(PBShowVersion.current)
-pbshow <subcommand> [options]
+        pbshow \(PBShowVersion.current)
+        pbshow <subcommand> [options]
 
-Global options:
-  -h, --help              Show help text.
-  -v, --version           Show CLI version.
-  -i, --index <n>         Target clipboard item #n.
+        Global options:
+          -h, --help              Show help text.
+          -v, --version           Show CLI version.
+          -i, --index <n>         Target clipboard item #n.
 
-Subcommands:
-  pbshow show [type]
-      Show clipboard items and types.
-      Without -i, all items are shown.
-      -f, --force         Force text rendering for non-text-target types.
+        Subcommands:
+          pbshow show [type]
+              Show clipboard items and types.
+              Without -i, all items are shown.
+              -f, --force         Force text rendering for non-text-target types.
 
-  pbshow list [type]
-      Show only metadata in YAML format (no body output).
-      Without -i, all items are shown.
+          pbshow list [type]
+              Show only metadata in YAML format (no body output).
+              Without -i, all items are shown.
 
-  pbshow export <type> [-o <path>]
-      Export raw data for one type from one clipboard item.
-      Without -i, item #0 is used.
-      -o, --output <path> Write to a file instead of stdout.
+          pbshow export <type> [-o <path>]
+              Export raw data for one type from one clipboard item.
+              Without -i, item #0 is used.
+              -o, --output <path> Write to a file instead of stdout.
 
-  pbshow clear
-      Clear all clipboard data. (ignores -i)
+          pbshow clear
+              Clear all clipboard data. (ignores -i)
 
-  pbshow help
-      Show help text (same as -h/--help).
-"""
+          pbshow help
+              Show help text (same as -h/--help).
+        """
     }
 
     private func validateOptions(for command: Command, force: Bool, outputPath: String?) throws {

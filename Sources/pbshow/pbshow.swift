@@ -1,7 +1,7 @@
 import Foundation
 
 @main
-struct pbshow {
+struct Pbshow {
     private static let parser = ArgumentParser()
     private static let renderer = Renderer()
     private static let output = OutputWriter.standard
@@ -24,11 +24,11 @@ struct pbshow {
 
     static func run(_ parsed: ParsedArguments) throws {
         switch parsed.command {
-        case let .show(typeFilter):
+        case .show(let typeFilter):
             try runShow(index: parsed.index, typeFilter: typeFilter, force: parsed.force)
-        case let .list(typeFilter):
+        case .list(let typeFilter):
             try runList(index: parsed.index, typeFilter: typeFilter)
-        case let .export(type, outputPath):
+        case .export(let type, let outputPath):
             try runExport(type: type, index: parsed.index, outputPath: outputPath)
         case .clear:
             runClear()

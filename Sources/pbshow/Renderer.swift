@@ -10,7 +10,7 @@ struct Renderer {
         .known(.tabularText),
         .known(.fileURL),
         .known(.url),
-        .known(.chromiumSourceURL)
+        .known(.chromiumSourceURL),
     ]
 
     func renderShow(snapshot: ClipboardSnapshot, targetIndexes: [Int], typeFilter: ClipboardType?, force: Bool) {
@@ -130,7 +130,7 @@ struct Renderer {
             .utf32BigEndian,
             .ascii,
             .isoLatin1,
-            .nonLossyASCII
+            .nonLossyASCII,
         ]
 
         for encoding in encodings {

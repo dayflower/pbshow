@@ -1,5 +1,5 @@
-import Foundation
 import AppKit
+import Foundation
 
 enum ClipboardType: Hashable {
     enum Known: CaseIterable {
@@ -60,9 +60,9 @@ enum ClipboardType: Hashable {
 
     var rawValue: String {
         switch self {
-        case let .known(known):
+        case .known(let known):
             return known.rawValue
-        case let .custom(value):
+        case .custom(let value):
             return value
         }
     }
