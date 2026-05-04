@@ -49,7 +49,7 @@ struct ArgumentParser {
 
         switch first {
         case "show":
-            let type = positionals.count >= 2 ? positionals[1] : nil
+            let type = positionals.count >= 2 ? ClipboardType(rawValue: positionals[1]) : nil
             if positionals.count > 2 {
                 throw CLIError("Too many arguments for 'show'")
             }
@@ -57,7 +57,7 @@ struct ArgumentParser {
             try validateOptions(for: parsed.command, force: force, outputPath: outputPath)
             return parsed
         case "list":
-            let type = positionals.count >= 2 ? positionals[1] : nil
+            let type = positionals.count >= 2 ? ClipboardType(rawValue: positionals[1]) : nil
             if positionals.count > 2 {
                 throw CLIError("Too many arguments for 'list'")
             }
@@ -71,7 +71,7 @@ struct ArgumentParser {
             if positionals.count > 2 {
                 throw CLIError("Too many arguments for 'export'")
             }
-            let parsed = ParsedArguments(command: .export(type: positionals[1], outputPath: outputPath), index: index, force: false)
+            let parsed = ParsedArguments(command: .export(type: ClipboardType(rawValue: positionals[1]), outputPath: outputPath), index: index, force: false)
             try validateOptions(for: parsed.command, force: force, outputPath: outputPath)
             return parsed
         case "clear":
@@ -86,7 +86,7 @@ struct ArgumentParser {
             if positionals.count > 1 {
                 throw CLIError("Unknown command: \(first)")
             }
-            let parsed = ParsedArguments(command: .show(type: first), index: index, force: force)
+            let parsed = ParsedArguments(command: .show(type: ClipboardType(rawValue: first)), index: index, force: force)
             try validateOptions(for: parsed.command, force: force, outputPath: outputPath)
             return parsed
         }

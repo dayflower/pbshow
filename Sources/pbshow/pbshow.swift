@@ -37,21 +37,21 @@ struct pbshow {
         }
     }
 
-    static func runShow(index: Int?, typeFilter: String?, force: Bool) throws {
+    static func runShow(index: Int?, typeFilter: ClipboardType?, force: Bool) throws {
         let targets = try collectTargetEntries(selectedIndex: index)
         let snapshot = targets.snapshot
         let targetIndexes = targets.targetIndexes
         renderer.renderShow(snapshot: snapshot, targetIndexes: targetIndexes, typeFilter: typeFilter, force: force)
     }
 
-    static func runList(index: Int?, typeFilter: String?) throws {
+    static func runList(index: Int?, typeFilter: ClipboardType?) throws {
         let targets = try collectTargetEntries(selectedIndex: index)
         let snapshot = targets.snapshot
         let targetIndexes = targets.targetIndexes
         renderer.renderList(snapshot: snapshot, targetIndexes: targetIndexes, typeFilter: typeFilter)
     }
 
-    static func runExport(type: String, index: Int?, outputPath: String?) throws {
+    static func runExport(type: ClipboardType, index: Int?, outputPath: String?) throws {
         let clipboardService = ClipboardService()
         let snapshot = clipboardService.fetchSnapshot()
         guard !snapshot.items.isEmpty else {
@@ -64,7 +64,7 @@ struct pbshow {
         }
 
         guard let data = snapshot.items[itemIndex].data(forType: type) else {
-            throw CLIError("Type '\(type)' not found in item #\(itemIndex).")
+            throw CLIError("Type '\(type.rawValue)' not found in item #\(itemIndex).")
         }
 
         if let outputPath {

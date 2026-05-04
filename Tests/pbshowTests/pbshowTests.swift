@@ -55,7 +55,7 @@ import Testing
 
     switch parsed.command {
     case let .export(type, outputPath):
-        #expect(type == "public.utf8-plain-text")
+        #expect(type.rawValue == "public.utf8-plain-text")
         #expect(outputPath == "out.bin")
     default:
         Issue.record("Expected export command")

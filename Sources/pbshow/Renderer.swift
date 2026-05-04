@@ -1,20 +1,19 @@
-import AppKit
 import Foundation
 
 struct Renderer {
     private let output = OutputWriter.standard
-    private static let textTypes: Set<String> = [
-        NSPasteboard.PasteboardType.html.rawValue,
-        NSPasteboard.PasteboardType.rtf.rawValue,
-        NSPasteboard.PasteboardType.string.rawValue,
-        "public.utf16-external-plain-text",
-        NSPasteboard.PasteboardType.tabularText.rawValue,
-        NSPasteboard.PasteboardType.fileURL.rawValue,
-        NSPasteboard.PasteboardType.URL.rawValue,
-        "org.chromium.source-url"
+    private static let textTypes: Set<ClipboardType> = [
+        .known(.html),
+        .known(.rtf),
+        .known(.plainText),
+        .known(.utf16PlainText),
+        .known(.tabularText),
+        .known(.fileURL),
+        .known(.url),
+        .known(.chromiumSourceURL)
     ]
 
-    func renderShow(snapshot: ClipboardSnapshot, targetIndexes: [Int], typeFilter: String?, force: Bool) {
+    func renderShow(snapshot: ClipboardSnapshot, targetIndexes: [Int], typeFilter: ClipboardType?, force: Bool) {
         guard !snapshot.items.isEmpty else {
             output.writeLine("[Clipboard contents]")
             output.writeLine("changeCount: \(snapshot.changeCount)")
@@ -38,26 +37,26 @@ struct Renderer {
             let filteredTypes = filterTypes(item.types, by: typeFilter)
             if filteredTypes.isEmpty {
                 if let typeFilter {
-                    output.writeLine("(type not found: \(typeFilter))")
+                    output.writeLine("(type not found: \(typeFilter.rawValue))")
                 } else {
                     output.writeLine("(no types)")
                 }
                 continue
             }
 
-            for rawType in filteredTypes {
+            for type in filteredTypes {
                 output.writeLine()
                 output.writeLine("---")
-                output.writeLine("type: \(rawType)")
+                output.writeLine("type: \(type.rawValue)")
 
-                guard let data = item.data(forType: rawType) else {
+                guard let data = item.data(forType: type) else {
                     output.writeLine("(no data)")
                     continue
                 }
 
                 output.writeLine("size: \(data.count) bytes")
 
-                if shouldRenderAsText(type: rawType, force: force), let text = decodeText(from: data) {
+                if shouldRenderAsText(type: type, force: force), let text = decodeText(from: data) {
                     output.writeLine()
                     writeRawToStdout(text)
                     if !text.hasSuffix("\n") {
@@ -72,7 +71,7 @@ struct Renderer {
         }
     }
 
-    func renderList(snapshot: ClipboardSnapshot, targetIndexes: [Int], typeFilter: String?) {
+    func renderList(snapshot: ClipboardSnapshot, targetIndexes: [Int], typeFilter: ClipboardType?) {
         guard !snapshot.items.isEmpty else {
             output.writeLine("clipboard:")
             output.writeLine("  changeCount: \(snapshot.changeCount)")
@@ -97,9 +96,9 @@ struct Renderer {
                 continue
             }
 
-            for rawType in filteredTypes {
-                let size = item.data(forType: rawType)?.count ?? 0
-                output.writeLine("        - type: \"\(escapeYAMLString(rawType))\"")
+            for type in filteredTypes {
+                let size = item.data(forType: type)?.count ?? 0
+                output.writeLine("        - type: \"\(escapeYAMLString(type.rawValue))\"")
                 output.writeLine("          size: \(size)")
             }
         }
@@ -109,11 +108,11 @@ struct Renderer {
         output.writeLine("Clipboard cleared.")
     }
 
-    private func shouldRenderAsText(type: String, force: Bool) -> Bool {
+    private func shouldRenderAsText(type: ClipboardType, force: Bool) -> Bool {
         force || Self.textTypes.contains(type)
     }
 
-    private func filterTypes(_ types: [String], by typeFilter: String?) -> [String] {
+    private func filterTypes(_ types: [ClipboardType], by typeFilter: ClipboardType?) -> [ClipboardType] {
         guard let typeFilter else {
             return types
         }

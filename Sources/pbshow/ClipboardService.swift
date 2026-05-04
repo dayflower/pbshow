@@ -2,15 +2,15 @@ import AppKit
 import Foundation
 
 struct ClipboardItem {
-    let types: [String]
-    private let dataByType: [String: Data]
+    let types: [ClipboardType]
+    private let dataByType: [ClipboardType: Data]
 
-    init(types: [String], dataByType: [String: Data]) {
+    init(types: [ClipboardType], dataByType: [ClipboardType: Data]) {
         self.types = types
         self.dataByType = dataByType
     }
 
-    func data(forType type: String) -> Data? {
+    func data(forType type: ClipboardType) -> Data? {
         dataByType[type]
     }
 }
@@ -35,12 +35,12 @@ struct ClipboardService: ClipboardServiceProtocol {
     func fetchSnapshot() -> ClipboardSnapshot {
         let pasteboardItems = pasteboard.pasteboardItems ?? []
         let items = pasteboardItems.map { item in
-            let types = item.types.map(\.rawValue)
-            var dataByType: [String: Data] = [:]
-            for rawType in types {
-                let type = NSPasteboard.PasteboardType(rawValue: rawType)
-                if let data = item.data(forType: type) {
-                    dataByType[rawType] = data
+            let types = item.types.map { ClipboardType(rawValue: $0.rawValue) }
+            var dataByType: [ClipboardType: Data] = [:]
+            for type in types {
+                let pasteboardType = NSPasteboard.PasteboardType(rawValue: type.rawValue)
+                if let data = item.data(forType: pasteboardType) {
+                    dataByType[type] = data
                 }
             }
             return ClipboardItem(types: types, dataByType: dataByType)
