@@ -9,6 +9,39 @@ It can:
 - Export raw bytes for a specific pasteboard type (`export`)
 - Clear clipboard contents (`clear`)
 
+## Install
+
+### Homebrew
+
+```bash
+brew install dayflower/tap/pbshow
+brew upgrade dayflower/tap/pbshow
+pbshow --version
+```
+
+### GitHub Releases
+
+Download the latest release archive from:
+
+- https://github.com/dayflower/pbshow/releases
+
+Then extract and install the `pbshow` binary from `pbshow-X.Y.Z-macos.zip`:
+
+```bash
+unzip pbshow-X.Y.Z-macos.zip
+install -m 755 pbshow /usr/local/bin/pbshow
+pbshow --version
+```
+
+If you prefer a user-local install path:
+
+```bash
+mkdir -p "$HOME/.local/bin"
+install -m 755 pbshow "$HOME/.local/bin/pbshow"
+chmod +x "$HOME/.local/bin/pbshow"
+pbshow --version
+```
+
 ## Usage
 
 ```text
@@ -95,6 +128,8 @@ swift run pbshow show
 ```
 
 ### Tooling
+
+Install development tooling:
 
 ```bash
 brew install swift-format
