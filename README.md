@@ -9,39 +9,6 @@ It can:
 - Export raw bytes for a specific pasteboard type (`export`)
 - Clear clipboard contents (`clear`)
 
-## Install
-
-### Homebrew
-
-```bash
-brew install dayflower/tap/pbshow
-brew upgrade dayflower/tap/pbshow
-pbshow --version
-```
-
-### GitHub Releases
-
-Download the latest release archive from:
-
-- https://github.com/dayflower/pbshow/releases
-
-Then extract and install the `pbshow` binary from `pbshow-X.Y.Z-macos.zip`:
-
-```bash
-unzip pbshow-X.Y.Z-macos.zip
-install -m 755 pbshow /usr/local/bin/pbshow
-pbshow --version
-```
-
-If you prefer a user-local install path:
-
-```bash
-mkdir -p "$HOME/.local/bin"
-install -m 755 pbshow "$HOME/.local/bin/pbshow"
-chmod +x "$HOME/.local/bin/pbshow"
-pbshow --version
-```
-
 ## Usage
 
 ```text
@@ -70,6 +37,43 @@ Notes:
 - Without `-i`, all items are shown.
 - `-f`, `--force` forces text rendering for non-text-target types.
 - When text rendering is not applied, output falls back to a hex dump.
+
+Example output:
+
+```text
+===== Clipboard contents =====
+changeCount: 621
+items: 1
+targets: 0
+
+[item #0]
+
+---
+type: public.html
+size: 158 bytes
+
+<meta charset='utf-8'><html><head></head><body><a href="https://github.com/dayflower/pbshow">dayflower/pbshow: macOS clipboard inspector CLI</a></body></html>
+
+---
+type: public.utf8-plain-text
+size: 35 bytes
+
+https://github.com/dayflower/pbshow
+
+---
+type: org.chromium.internal.source-rfh-token
+size: 24 bytes
+view: hex
+
+0000  14 00 00 00 00 13 00 00 4c 34 0d 48 b7 e4 5c 3a  |........L4.H..\:|
+0010  6d f8 e8 fd a3 87 b8 b1                          |m.......|
+
+---
+type: org.chromium.source-url
+size: 35 bytes
+
+https://github.com/dayflower/pbshow
+```
 
 ### list
 
@@ -105,50 +109,42 @@ Clear clipboard contents.
 pbshow clear
 ```
 
+## Install
+
+### Homebrew
+
+```bash
+brew install dayflower/tap/pbshow
+brew upgrade dayflower/tap/pbshow
+pbshow --version
+```
+
+### GitHub Releases
+
+Download the latest release archive from:
+
+- https://github.com/dayflower/pbshow/releases
+
+Then extract and install the `pbshow` binary from `pbshow-X.Y.Z-macos.zip`:
+
+```bash
+unzip pbshow-X.Y.Z-macos.zip
+install -m 755 pbshow /usr/local/bin/pbshow
+pbshow --version
+```
+
+If you prefer a user-local install path:
+
+```bash
+mkdir -p "$HOME/.local/bin"
+install -m 755 pbshow "$HOME/.local/bin/pbshow"
+chmod +x "$HOME/.local/bin/pbshow"
+pbshow --version
+```
+
 ## Development
 
-This repository uses `make` and `swift-format`.
-CI runs on GitHub Actions in two workflows: `ci.yml` for pull requests to `main`, and `release.yml` for pushes to `main`. Both run the shared verification workflow (`make lint` and `make test`), and `release.yml` additionally creates tags and GitHub Releases when `VERSION` changes.
-
-### Requirements
-
-- macOS 10.15+
-- Swift 6.2 toolchain
-
-### Build
-
-```bash
-swift build
-```
-
-Run directly with SwiftPM:
-
-```bash
-swift run pbshow show
-```
-
-### Tooling
-
-Install development tooling:
-
-```bash
-brew install swift-format
-make format
-make lint
-make build
-make test
-make check
-```
-
-## Release Flow
-
-- Run `./scripts/bump-version.sh <major|minor|patch>` from `main` with a clean working tree.
-- The script updates `VERSION` and `Sources/pbshow/Version.swift`, creates a `release/vX.Y.Z` branch, pushes it, and opens a PR.
-- Merge the PR into `main`.
-- CI detects the `VERSION` change on `main` and then:
-  - creates and pushes tag `vX.Y.Z`
-  - builds release binary (`swift build -c release`)
-  - uploads `pbshow-X.Y.Z-macos.zip` to a public GitHub Release named `vX.Y.Z`
+See [notes/DEVELOPMENT.md](notes/DEVELOPMENT.md).
 
 ## License
 
