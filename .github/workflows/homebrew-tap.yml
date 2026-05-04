@@ -1,0 +1,30 @@
+name: Update Homebrew tap
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-homebrew-tap:
+    name: Update Homebrew tap
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Update Homebrew tap
+        uses: dayflower/brew-up@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release-tag: ${{ github.ref_name }}
+          template-path: homebrew/pbshow.rb.tmpl
+          output-path: Formula/pbshow.rb
+          asset-map: |
+            default=pbshow-{{version}}-macos.zip
+          target-repo: dayflower/homebrew-tap
+          target-branch: main
+          target-repo-token: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
+          publish-mode: pr-auto-merge
+          auto-merge-method: squash
