@@ -8,6 +8,10 @@ struct ArgumentParser {
             return ParsedArguments(command: .help, index: nil, force: false)
         }
 
+        if args.contains("-v") || args.contains("--version") {
+            return ParsedArguments(command: .version, index: nil, force: false)
+        }
+
         var index: Int?
         var force = false
         var outputPath: String?
@@ -93,37 +97,17 @@ struct ArgumentParser {
     }
 
     func printHelp() {
-        output.writeLine(helpText)
+        output.writeLine(helpText())
     }
 
-    private func validateOptions(for command: Command, force: Bool, outputPath: String?) throws {
-        switch command {
-        case .show:
-            if outputPath != nil {
-                throw CLIError("Option -o/--output is only valid with 'export'.")
-            }
-            return
-        case .export:
-            if force {
-                throw CLIError("Option -f/--force is only valid with 'show'.")
-            }
-            return
-        case .list, .clear, .help:
-            if force {
-                throw CLIError("Option -f/--force is only valid with 'show'.")
-            }
-            if outputPath != nil {
-                throw CLIError("Option -o/--output is only valid with 'export'.")
-            }
-        }
-    }
-
-    private var helpText: String {
+    func helpText() -> String {
         """
+pbshow \(PBShowVersion.current)
 pbshow <subcommand> [options]
 
 Global options:
   -h, --help              Show help text.
+  -v, --version           Show CLI version.
   -i, --index <n>         Target clipboard item #n.
 
 Subcommands:
@@ -147,5 +131,27 @@ Subcommands:
   pbshow help
       Show help text (same as -h/--help).
 """
+    }
+
+    private func validateOptions(for command: Command, force: Bool, outputPath: String?) throws {
+        switch command {
+        case .show:
+            if outputPath != nil {
+                throw CLIError("Option -o/--output is only valid with 'export'.")
+            }
+            return
+        case .export:
+            if force {
+                throw CLIError("Option -f/--force is only valid with 'show'.")
+            }
+            return
+        case .list, .clear, .help, .version:
+            if force {
+                throw CLIError("Option -f/--force is only valid with 'show'.")
+            }
+            if outputPath != nil {
+                throw CLIError("Option -o/--output is only valid with 'export'.")
+            }
+        }
     }
 }

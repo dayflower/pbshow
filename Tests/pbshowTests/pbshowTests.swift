@@ -108,6 +108,53 @@ import Foundation
     }
 }
 
+@Test func parse_parsesVersionLongOption() throws {
+    let parser = ArgumentParser()
+    let parsed = try parser.parse(["--version"])
+
+    #expect(parsed.index == nil)
+    #expect(parsed.force == false)
+    switch parsed.command {
+    case .version:
+        break
+    default:
+        Issue.record("Expected version command")
+    }
+}
+
+@Test func parse_parsesVersionShortOption() throws {
+    let parser = ArgumentParser()
+    let parsed = try parser.parse(["-v"])
+
+    #expect(parsed.index == nil)
+    #expect(parsed.force == false)
+    switch parsed.command {
+    case .version:
+        break
+    default:
+        Issue.record("Expected version command")
+    }
+}
+
+@Test func parse_rejectsOutputForVersion() throws {
+    let parser = ArgumentParser()
+
+    #expect(throws: CLIError.self) {
+        _ = try parser.parse(["version", "-o", "out.bin"])
+    }
+}
+
+@Test func versionLine_formatsBinaryAndSemVer() throws {
+    #expect(pbshow.versionLine() == "pbshow 0.1.0")
+}
+
+@Test func helpText_includesCurrentVersion() throws {
+    let parser = ArgumentParser()
+    let help = parser.helpText()
+
+    #expect(help.contains("pbshow 0.1.0"))
+}
+
 @Test func parse_acceptsOutputForExport() throws {
     let parser = ArgumentParser()
     let parsed = try parser.parse(["export", "public.utf8-plain-text", "-o", "out.bin"])

@@ -74,6 +74,7 @@ enum Command {
     case export(type: ClipboardType, outputPath: String?)
     case clear
     case help
+    case version
 }
 
 struct ParsedArguments {

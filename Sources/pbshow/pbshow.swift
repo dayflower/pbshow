@@ -34,7 +34,13 @@ struct pbshow {
             runClear()
         case .help:
             parser.printHelp()
+        case .version:
+            output.writeLine(versionLine())
         }
+    }
+
+    static func versionLine() -> String {
+        "pbshow \(PBShowVersion.current)"
     }
 
     static func runShow(index: Int?, typeFilter: ClipboardType?, force: Bool) throws {
