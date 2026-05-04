@@ -119,7 +119,7 @@ struct Renderer {
         return types.filter { $0 == typeFilter }
     }
 
-    private func decodeText(from data: Data) -> String? {
+    func decodeText(from data: Data) -> String? {
         let encodings: [String.Encoding] = [
             .utf8,
             .utf16,
@@ -142,7 +142,7 @@ struct Renderer {
         return nil
     }
 
-    private func hexDump(data: Data, maxBytes: Int) -> String {
+    func hexDump(data: Data, maxBytes: Int) -> String {
         let shownData = data.prefix(maxBytes)
         var lines: [String] = []
 
