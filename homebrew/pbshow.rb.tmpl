@@ -1,0 +1,11 @@
+class Pbshow < Formula
+  desc "macOS clipboard inspector CLI"
+  homepage "https://github.com/dayflower/pbshow"
+  version "{{version}}"
+  url "{{artifacts.default.url}}"
+  sha256 "{{artifacts.default.sha256}}"
+
+  def install
+    bin.install "pbshow"
+  end
+end

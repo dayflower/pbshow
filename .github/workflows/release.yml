@@ -92,14 +92,18 @@ jobs:
           rm -f "${archive}"
           zip -j "${archive}" .build/release/pbshow
 
+      - name: Generate GitHub App token
+        id: app_token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.ACTIONS_APP_ID }}
+          private-key: ${{ secrets.ACTIONS_APP_PRIVATE_KEY }}
+
       - name: Create GitHub release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          tag="${{ steps.release_meta.outputs.tag }}"
-          archive="${{ steps.release_meta.outputs.archive }}"
-          gh release create "${tag}" "${archive}" \
-            --title "${tag}" \
-            --notes "Release ${tag}" \
-            --latest
+        uses: softprops/action-gh-release@v3
+        with:
+          token: ${{ steps.app_token.outputs.token }}
+          tag_name: ${{ steps.release_meta.outputs.tag }}
+          name: ${{ steps.release_meta.outputs.tag }}
+          generate_release_notes: true
+          files: ${{ steps.release_meta.outputs.archive }}
