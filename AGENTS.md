@@ -22,6 +22,31 @@
 - Keep comments concise and in English.
 - Do not introduce new dependencies unless required by the task.
 
+## Development Tooling
+
+This repository uses:
+
+- `swift-format` for code formatting
+- `make` as the primary command entrypoint
+
+Install tools with Homebrew:
+
+```bash
+brew install swift-format
+```
+
+Common commands:
+
+```bash
+make format   # Rewrite formatting in Sources/ and Tests/
+make lint     # Run swift-format lint
+make build    # Build the package
+make test     # Run tests with sandbox-friendly HOME
+make check    # Run lint and test
+make run      # Run: swift run pbshow show
+make clean    # Clean SwiftPM artifacts
+```
+
 ## Build and Run
 
 - Build:
