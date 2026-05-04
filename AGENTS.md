@@ -4,7 +4,7 @@
 
 - Project: `pbshow`
 - Type: Swift Package executable
-- Swift tools version: `6.3`
+- Swift tools version: `6.2`
 - Language mode: Swift 6
 - Platform target: macOS 10.15+
 - Entry point: `Sources/pbshow/pbshow.swift`
