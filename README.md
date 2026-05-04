@@ -75,6 +75,7 @@ pbshow clear
 ## Development
 
 This repository uses `make` and `swift-format`.
+CI runs on GitHub Actions for `push` and `pull_request` to `main`, and executes `make lint` and `make test`.
 
 ### Requirements
 
