@@ -15,7 +15,7 @@ struct Renderer {
 
     func renderShow(snapshot: ClipboardSnapshot, targetIndexes: [Int], typeFilter: ClipboardType?, force: Bool) {
         guard !snapshot.items.isEmpty else {
-            output.writeLine("[Clipboard contents]")
+            output.writeLine("===== Clipboard contents =====")
             output.writeLine("changeCount: \(snapshot.changeCount)")
             output.writeLine("items: 0")
             output.writeLine("targets: []")
@@ -24,7 +24,7 @@ struct Renderer {
             return
         }
 
-        output.writeLine("[Clipboard contents]")
+        output.writeLine("===== Clipboard contents =====")
         output.writeLine("changeCount: \(snapshot.changeCount)")
         output.writeLine("items: \(snapshot.items.count)")
         output.writeLine("targets: \(targetIndexes.map(String.init).joined(separator: ", "))")
@@ -32,7 +32,7 @@ struct Renderer {
         for itemIndex in targetIndexes {
             let item = snapshot.items[itemIndex]
             output.writeLine()
-            output.writeLine("===== item #\(itemIndex) =====")
+            output.writeLine("[item #\(itemIndex)]")
 
             let filteredTypes = filterTypes(item.types, by: typeFilter)
             if filteredTypes.isEmpty {
