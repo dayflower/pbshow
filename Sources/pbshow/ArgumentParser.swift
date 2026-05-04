@@ -40,7 +40,9 @@ struct ArgumentParser {
         }
 
         guard let first = positionals.first else {
-            return ParsedArguments(command: .show(type: nil), index: index, force: force)
+            let parsed = ParsedArguments(command: .show(type: nil), index: index, force: force)
+            try validateOptions(for: parsed.command, force: force, outputPath: outputPath)
+            return parsed
         }
 
         switch first {
@@ -49,13 +51,17 @@ struct ArgumentParser {
             if positionals.count > 2 {
                 throw CLIError("Too many arguments for 'show'")
             }
-            return ParsedArguments(command: .show(type: type), index: index, force: force)
+            let parsed = ParsedArguments(command: .show(type: type), index: index, force: force)
+            try validateOptions(for: parsed.command, force: force, outputPath: outputPath)
+            return parsed
         case "list":
             let type = positionals.count >= 2 ? positionals[1] : nil
             if positionals.count > 2 {
                 throw CLIError("Too many arguments for 'list'")
             }
-            return ParsedArguments(command: .list(type: type), index: index, force: false)
+            let parsed = ParsedArguments(command: .list(type: type), index: index, force: false)
+            try validateOptions(for: parsed.command, force: force, outputPath: outputPath)
+            return parsed
         case "export":
             guard positionals.count >= 2 else {
                 throw CLIError("Missing type for 'export'")
@@ -63,21 +69,51 @@ struct ArgumentParser {
             if positionals.count > 2 {
                 throw CLIError("Too many arguments for 'export'")
             }
-            return ParsedArguments(command: .export(type: positionals[1], outputPath: outputPath), index: index, force: false)
+            let parsed = ParsedArguments(command: .export(type: positionals[1], outputPath: outputPath), index: index, force: false)
+            try validateOptions(for: parsed.command, force: force, outputPath: outputPath)
+            return parsed
         case "clear":
-            return ParsedArguments(command: .clear, index: nil, force: false)
+            let parsed = ParsedArguments(command: .clear, index: nil, force: false)
+            try validateOptions(for: parsed.command, force: force, outputPath: outputPath)
+            return parsed
         case "help":
-            return ParsedArguments(command: .help, index: nil, force: false)
+            let parsed = ParsedArguments(command: .help, index: nil, force: false)
+            try validateOptions(for: parsed.command, force: force, outputPath: outputPath)
+            return parsed
         default:
             if positionals.count > 1 {
                 throw CLIError("Unknown command: \(first)")
             }
-            return ParsedArguments(command: .show(type: first), index: index, force: force)
+            let parsed = ParsedArguments(command: .show(type: first), index: index, force: force)
+            try validateOptions(for: parsed.command, force: force, outputPath: outputPath)
+            return parsed
         }
     }
 
     func printHelp() {
         print(helpText)
+    }
+
+    private func validateOptions(for command: Command, force: Bool, outputPath: String?) throws {
+        switch command {
+        case .show:
+            if outputPath != nil {
+                throw CLIError("Option -o/--output is only valid with 'export'.")
+            }
+            return
+        case .export:
+            if force {
+                throw CLIError("Option -f/--force is only valid with 'show'.")
+            }
+            return
+        case .list, .clear, .help:
+            if force {
+                throw CLIError("Option -f/--force is only valid with 'show'.")
+            }
+            if outputPath != nil {
+                throw CLIError("Option -o/--output is only valid with 'export'.")
+            }
+        }
     }
 
     private var helpText: String {
