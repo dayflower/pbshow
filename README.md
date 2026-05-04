@@ -80,7 +80,7 @@ CI runs on GitHub Actions for `push` and `pull_request` to `main`, and executes 
 ### Requirements
 
 - macOS 10.15+
-- Swift 6.3 toolchain
+- Swift 6.2 toolchain
 
 ### Build
 
