@@ -2,6 +2,7 @@ import AppKit
 import Foundation
 
 struct Renderer {
+    private let output = OutputWriter.standard
     private static let textTypes: Set<String> = [
         NSPasteboard.PasteboardType.html.rawValue,
         NSPasteboard.PasteboardType.rtf.rawValue,
@@ -15,57 +16,57 @@ struct Renderer {
 
     func renderShow(snapshot: ClipboardSnapshot, targetIndexes: [Int], typeFilter: String?, force: Bool) {
         guard !snapshot.items.isEmpty else {
-            print("[Clipboard contents]")
-            print("changeCount: \(snapshot.changeCount)")
-            print("items: 0")
-            print("targets: []")
-            print("")
-            print("Clipboard is empty.")
+            output.writeLine("[Clipboard contents]")
+            output.writeLine("changeCount: \(snapshot.changeCount)")
+            output.writeLine("items: 0")
+            output.writeLine("targets: []")
+            output.writeLine()
+            output.writeLine("Clipboard is empty.")
             return
         }
 
-        print("[Clipboard contents]")
-        print("changeCount: \(snapshot.changeCount)")
-        print("items: \(snapshot.items.count)")
-        print("targets: \(targetIndexes.map(String.init).joined(separator: ", "))")
+        output.writeLine("[Clipboard contents]")
+        output.writeLine("changeCount: \(snapshot.changeCount)")
+        output.writeLine("items: \(snapshot.items.count)")
+        output.writeLine("targets: \(targetIndexes.map(String.init).joined(separator: ", "))")
 
         for itemIndex in targetIndexes {
             let item = snapshot.items[itemIndex]
-            print("")
-            print("===== item #\(itemIndex) =====")
+            output.writeLine()
+            output.writeLine("===== item #\(itemIndex) =====")
 
             let filteredTypes = filterTypes(item.types, by: typeFilter)
             if filteredTypes.isEmpty {
                 if let typeFilter {
-                    print("(type not found: \(typeFilter))")
+                    output.writeLine("(type not found: \(typeFilter))")
                 } else {
-                    print("(no types)")
+                    output.writeLine("(no types)")
                 }
                 continue
             }
 
             for rawType in filteredTypes {
-                print("")
-                print("---")
-                print("type: \(rawType)")
+                output.writeLine()
+                output.writeLine("---")
+                output.writeLine("type: \(rawType)")
 
                 guard let data = item.data(forType: rawType) else {
-                    print("(no data)")
+                    output.writeLine("(no data)")
                     continue
                 }
 
-                print("size: \(data.count) bytes")
+                output.writeLine("size: \(data.count) bytes")
 
                 if shouldRenderAsText(type: rawType, force: force), let text = decodeText(from: data) {
-                    print("")
+                    output.writeLine()
                     writeRawToStdout(text)
                     if !text.hasSuffix("\n") {
-                        print("")
+                        output.writeLine()
                     }
                 } else {
-                    print("view: hex")
-                    print("")
-                    print(hexDump(data: data, maxBytes: 256))
+                    output.writeLine("view: hex")
+                    output.writeLine()
+                    output.writeLine(hexDump(data: data, maxBytes: 256))
                 }
             }
         }
@@ -73,39 +74,39 @@ struct Renderer {
 
     func renderList(snapshot: ClipboardSnapshot, targetIndexes: [Int], typeFilter: String?) {
         guard !snapshot.items.isEmpty else {
-            print("clipboard:")
-            print("  changeCount: \(snapshot.changeCount)")
-            print("  items: []")
+            output.writeLine("clipboard:")
+            output.writeLine("  changeCount: \(snapshot.changeCount)")
+            output.writeLine("  items: []")
             return
         }
 
-        print("clipboard:")
-        print("  changeCount: \(snapshot.changeCount)")
-        print("  totalItems: \(snapshot.items.count)")
-        print("  targets: [\(targetIndexes.map(String.init).joined(separator: ", "))]")
-        print("  items:")
+        output.writeLine("clipboard:")
+        output.writeLine("  changeCount: \(snapshot.changeCount)")
+        output.writeLine("  totalItems: \(snapshot.items.count)")
+        output.writeLine("  targets: [\(targetIndexes.map(String.init).joined(separator: ", "))]")
+        output.writeLine("  items:")
 
         for itemIndex in targetIndexes {
             let item = snapshot.items[itemIndex]
             let filteredTypes = filterTypes(item.types, by: typeFilter)
 
-            print("    - index: \(itemIndex)")
-            print("      formats:")
+            output.writeLine("    - index: \(itemIndex)")
+            output.writeLine("      formats:")
             if filteredTypes.isEmpty {
-                print("        []")
+                output.writeLine("        []")
                 continue
             }
 
             for rawType in filteredTypes {
                 let size = item.data(forType: rawType)?.count ?? 0
-                print("        - type: \"\(escapeYAMLString(rawType))\"")
-                print("          size: \(size)")
+                output.writeLine("        - type: \"\(escapeYAMLString(rawType))\"")
+                output.writeLine("          size: \(size)")
             }
         }
     }
 
     func printClearCompleted() {
-        print("Clipboard cleared.")
+        output.writeLine("Clipboard cleared.")
     }
 
     private func shouldRenderAsText(type: String, force: Bool) -> Bool {
@@ -174,10 +175,6 @@ struct Renderer {
     }
 
     private func writeRawToStdout(_ text: String) {
-        if let data = text.data(using: .utf8) {
-            FileHandle.standardOutput.write(data)
-            return
-        }
-        print(text, terminator: "")
+        output.write(text)
     }
 }

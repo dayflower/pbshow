@@ -1,6 +1,8 @@
 import Foundation
 
 struct ArgumentParser {
+    private let output = OutputWriter.standard
+
     func parse(_ args: [String]) throws -> ParsedArguments {
         if args.contains("-h") || args.contains("--help") {
             return ParsedArguments(command: .help, index: nil, force: false)
@@ -91,7 +93,7 @@ struct ArgumentParser {
     }
 
     func printHelp() {
-        print(helpText)
+        output.writeLine(helpText)
     }
 
     private func validateOptions(for command: Command, force: Bool, outputPath: String?) throws {

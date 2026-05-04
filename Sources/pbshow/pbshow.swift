@@ -4,6 +4,7 @@ import Foundation
 struct pbshow {
     private static let parser = ArgumentParser()
     private static let renderer = Renderer()
+    private static let output = OutputWriter.standard
     private typealias ClipboardTargets = (snapshot: ClipboardSnapshot, targetIndexes: [Int])
 
     static func main() {
@@ -11,11 +12,12 @@ struct pbshow {
             let parsed = try parser.parse(Array(CommandLine.arguments.dropFirst()))
             try run(parsed)
         } catch let error as CLIError {
-            fputs("Error: \(error.message)\n\n", stderr)
+            output.writeErrorLine("Error: \(error.message)")
+            output.writeErrorLine()
             parser.printHelp()
             Foundation.exit(2)
         } catch {
-            fputs("Unexpected error: \(error.localizedDescription)\n", stderr)
+            output.writeErrorLine("Unexpected error: \(error.localizedDescription)")
             Foundation.exit(1)
         }
     }
@@ -68,9 +70,9 @@ struct pbshow {
         if let outputPath {
             let url = URL(fileURLWithPath: outputPath)
             try data.write(to: url)
-            print("Exported \(data.count) bytes to \(outputPath)")
+            output.writeLine("Exported \(data.count) bytes to \(outputPath)")
         } else {
-            FileHandle.standardOutput.write(data)
+            output.writeData(data)
         }
     }
 
