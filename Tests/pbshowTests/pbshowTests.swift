@@ -146,14 +146,14 @@ import Testing
 }
 
 @Test func versionLine_formatsBinaryAndSemVer() throws {
-    #expect(Pbshow.versionLine() == "pbshow 0.1.0")
+    #expect(Pbshow.versionLine() == "pbshow \(PBShowVersion.current)")
 }
 
 @Test func helpText_includesCurrentVersion() throws {
     let parser = ArgumentParser()
     let help = parser.helpText()
 
-    #expect(help.contains("pbshow 0.1.0"))
+    #expect(help.contains("pbshow \(PBShowVersion.current)"))
 }
 
 @Test func parse_acceptsOutputForExport() throws {
