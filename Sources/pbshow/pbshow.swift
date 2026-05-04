@@ -4,6 +4,7 @@ import Foundation
 struct pbshow {
     private static let parser = ArgumentParser()
     private static let renderer = Renderer()
+    private typealias ClipboardTargets = (snapshot: ClipboardSnapshot, targetIndexes: [Int])
 
     static func main() {
         do {
@@ -35,28 +36,16 @@ struct pbshow {
     }
 
     static func runShow(index: Int?, typeFilter: String?, force: Bool) throws {
-        let clipboardService = ClipboardService()
-        let snapshot = clipboardService.fetchSnapshot()
-
-        if snapshot.items.isEmpty {
-            renderer.renderShow(snapshot: snapshot, targetIndexes: [], typeFilter: typeFilter, force: force)
-            return
-        }
-
-        let targetIndexes = try resolveTargetIndexes(itemCount: snapshot.items.count, selectedIndex: index)
+        let targets = try collectTargetEntries(selectedIndex: index)
+        let snapshot = targets.snapshot
+        let targetIndexes = targets.targetIndexes
         renderer.renderShow(snapshot: snapshot, targetIndexes: targetIndexes, typeFilter: typeFilter, force: force)
     }
 
     static func runList(index: Int?, typeFilter: String?) throws {
-        let clipboardService = ClipboardService()
-        let snapshot = clipboardService.fetchSnapshot()
-
-        if snapshot.items.isEmpty {
-            renderer.renderList(snapshot: snapshot, targetIndexes: [], typeFilter: typeFilter)
-            return
-        }
-
-        let targetIndexes = try resolveTargetIndexes(itemCount: snapshot.items.count, selectedIndex: index)
+        let targets = try collectTargetEntries(selectedIndex: index)
+        let snapshot = targets.snapshot
+        let targetIndexes = targets.targetIndexes
         renderer.renderList(snapshot: snapshot, targetIndexes: targetIndexes, typeFilter: typeFilter)
     }
 
@@ -99,5 +88,19 @@ struct pbshow {
             return [selectedIndex]
         }
         return Array(0..<itemCount)
+    }
+
+    private static func collectTargetEntries(selectedIndex: Int?) throws -> ClipboardTargets {
+        let clipboardService = ClipboardService()
+        let snapshot = clipboardService.fetchSnapshot()
+
+        let targetIndexes: [Int]
+        if snapshot.items.isEmpty {
+            targetIndexes = []
+        } else {
+            targetIndexes = try resolveTargetIndexes(itemCount: snapshot.items.count, selectedIndex: selectedIndex)
+        }
+
+        return (snapshot: snapshot, targetIndexes: targetIndexes)
     }
 }
