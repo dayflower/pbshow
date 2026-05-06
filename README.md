@@ -2,6 +2,24 @@
 
 `pbshow` is a macOS clipboard inspector CLI built with Swift.
 
+## Motivation
+
+I develop clipboard-oriented macOS apps such as
+[popmark](https://github.com/dayflower/popmark) and
+[marklip](https://github.com/dayflower/marklip).
+
+When building this kind of software, it is important to inspect what is
+actually stored in the clipboard, including pasteboard types, byte payloads,
+and text-renderable content.
+
+AppleScript can already expose clipboard internals via `the clipboard as record`
+(see [Macのクリップボードの中身を見る](https://okumuralab.org/~okumura/misc/241018.html)).
+However, that output is very close to raw data and is often hard to read during
+day-to-day debugging.
+
+`pbshow` was created to make clipboard inspection more practical and readable
+for development workflows.
+
 It can:
 
 - Show clipboard item contents (`show`)
