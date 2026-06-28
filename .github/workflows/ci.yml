@@ -11,4 +11,7 @@ concurrency:
 
 jobs:
   verify:
+    permissions:
+      contents: read
+      security-events: write
     uses: ./.github/workflows/_verify.yml
