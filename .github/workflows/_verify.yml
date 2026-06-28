@@ -18,6 +18,15 @@ jobs:
         with:
           swift-version: "6.2"
 
+      - name: Install swift-format
+        run: brew install swift-format
+
+      - name: Run lint
+        run: make lint
+
+      - name: Run tests
+        run: make test
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@411bbbe57033eedfc1a82d68c01345aa96c737d7 # v4
         with:
@@ -28,15 +37,6 @@ jobs:
 
       - name: Build for CodeQL
         run: swift build --arch arm64
-
-      - name: Install swift-format
-        run: brew install swift-format
-
-      - name: Run lint
-        run: make lint
-
-      - name: Run tests
-        run: make test
 
       - name: Analyze with CodeQL
         uses: github/codeql-action/analyze@411bbbe57033eedfc1a82d68c01345aa96c737d7 # v4
